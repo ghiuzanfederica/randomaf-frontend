@@ -2,6 +2,7 @@
 
 let currentMode = 'signin';
 let currentUser = null; // Variabila globala pentru user-ul conectat
+const API_BASE_URL = 'https://randomaf-backend.onrender.com';
 
 // Initializare
 function initializeAuthentication() {
