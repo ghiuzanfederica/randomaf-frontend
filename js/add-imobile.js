@@ -159,34 +159,10 @@ function initializeAdd() {
         }
       };
       
-
-
       // Buton confirmă
       document.getElementById('confirmaCardBtn').onclick = function() {
         const draft = JSON.parse(sessionStorage.getItem('draftImobilCard'));
-        const payload = {
-          titlu: draft.titlu,
-          pret: draft.pret,
-          locatie: draft.locatie,
-          descriere: draft.descriere,
-          tip: draft.tip,
-          tranzactie: draft.tranzactie,
-          imagini: draft.imagini, // array de imagini (doar URL-uri temporare, pentru upload folosești separat)
-          suprafata: draft.suprafata,
-          suprafataUtila: draft.suprafataUtila,
-          suprafataTeren: draft.suprafataTeren,
-          nrCamere: draft.nrCamere,
-          nrBai: draft.nrBai,
-          compartimentare: draft.compartimentare,
-          confort: draft.confort,
-          etaj: draft.etaj,
-          anConstructie: draft.anConstructie,
-          tipTeren: draft.tipTeren,
-          clasificare: draft.clasificare,
-          frontStradal: draft.frontStradal,
-          alteDotari: draft.alteDotari
-        };
-        fetch(`https://randomaf-backend.onrender.com/api/imobil`, {
+        fetch('https://randomaf-backend.onrender.com/api/imobil', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(draft)
@@ -199,7 +175,7 @@ function initializeAdd() {
               const formData = new FormData();
               formData.append('anunt_id', data.id);
               formData.append('imagine', window.terenImages[0]);
-              fetch(`https://randomaf-backend.onrender.com/api/upload-imagine`, {
+              fetch('https://randomaf-backend.onrender.com/api/upload-imagine', {
                 method: 'POST',
                 body: formData
               })
@@ -207,20 +183,12 @@ function initializeAdd() {
               .then(imgData => {
                 alert('Anunț și imagine încărcate cu succes!');
                 sessionStorage.removeItem('draftImobilCard');
-                if (typeof loadContent === 'function') {
-                  loadContent('html/home.html');
-                  } else {
-                    window.location.href = 'index.html';
-                }
+                window.location.href = '../index.html';
               });
             } else {
               alert('Anunț adăugat fără imagine!');
               sessionStorage.removeItem('draftImobilCard');
-             if (typeof loadContent === 'function') {
-              loadContent('html/home.html');
-            } else {
-              window.location.href = 'index.html';
-              }
+              window.location.href = '../index.html';
             }
           } else {
             alert('Eroare la adăugare!');
