@@ -3,31 +3,74 @@ let navbar = null;
 let menuBtn = null;
 let mainDiv = null;
 
-// Încărcare conținut dinamic
+// Incarcare continut dinamic
 function loadContent(file) {
   fetch(file)
     .then(res => res.text())
     .then(html => {
       document.getElementById("content").innerHTML = html;
 
-      // Execută inițializarea după încărcarea HTML-ului
+      // Executa initializarea dupa incarcarea HTML-ului
       if (file.includes('home.html')) {
         initializeHome();
       }
-      // if (file.includes('detalii.html')) { se apeleaza in alta parte, in home.js
-      //   initializeDetalii();
-      // }
       if (file.includes('map.html')) {
         initializeMap();
       }
       if (file.includes('add-imobile.html')) {
         initializeAdd();
       }
+      if (file.includes('auth.html')) {
+        initializeAuthentication();
+      }
+      if (file.includes('profile.html')) {
+        initializeProfile();
+      }
+      if (file.includes('favorites.html')) {
+        initializeFavorites();
+      }
     })
-    .catch(err => console.error("Eroare la încărcarea fișierului:", err));
-  }
+    .catch(err => console.error("Eroare la incarcarea fisierului:", err));
+}
 
-// Ascunde meniu și extinde conținut
+// Verifica autentificarea si redirecteaza daca e necesar
+async function checkAuthAndLoad(file) {
+  // Paginile care necesita autentificare
+  const protectedPages = ['add-imobile.html', 'favorites.html', 'profile.html'];
+  
+  // Verifica daca pagina necesita autentificare
+  const needsAuth = protectedPages.some(page => file.includes(page));
+  
+  if (needsAuth) {
+    // Verifica daca user-ul este conectat
+    try {
+      const response = await fetch('https://randomaf-backend.onrender.com/api/auth/current-user', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      const result = await response.json();
+      
+      if (!result.success || !result.user) {
+        // Nu este conectat, incarca pagina de auth
+        loadContent('html/auth.html');
+        return;
+      }
+      
+      // Este conectat, salveaza user-ul si incarca pagina
+      sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+      loadContent(file);
+    } catch (error) {
+      console.error('Eroare verificare auth:', error);
+      loadContent('html/auth.html');
+    }
+  } else {
+    // Pagina nu necesita autentificare
+    loadContent(file);
+  }
+}
+
+// Ascunde meniu si extinde continut
 function hideMenuAndExpandContent() {
   navbar.style.display = 'none';
   if(mainDiv) {
@@ -36,7 +79,7 @@ function hideMenuAndExpandContent() {
   }
 }
 
-// Afișează meniu și restrânge conținut
+// Afiseaza meniu si restrange continut
 function showMenuAndShrinkContent() {
   navbar.style.display = 'block';
   if(mainDiv) {
@@ -54,13 +97,13 @@ function toggleMenu() {
   }
 }
 
-// Activare link navigație
+// Activare link navigatie
 function activateNavLink(clickedLink) {
   document.querySelectorAll('nav li a').forEach(l => l.classList.remove('active'));
   clickedLink.classList.add('active');
 }
 
-// Inițializare stare meniu
+// Initializare stare meniu
 function initializeMenuState() {
   if (window.innerWidth > 768) {
     showMenuAndShrinkContent();
@@ -82,7 +125,7 @@ function handleResize() {
   }
 }
 
-// Event listeners și inițializare
+// Event listeners si initializare
 window.addEventListener('DOMContentLoaded', function() {
   // Elemente DOM
   navbar = document.getElementById('navbar');
@@ -99,6 +142,9 @@ window.addEventListener('DOMContentLoaded', function() {
   
   initializeMenuState();
   window.addEventListener('resize', handleResize);
+  
+  loadContent('html/home.html');
 });
 
 window.loadContent = loadContent;
+window.checkAuthAndLoad = checkAuthAndLoad;
