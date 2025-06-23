@@ -250,7 +250,7 @@ async function renderImobileCards(imobileData) {
  * Creeaza HTML-ul pentru un card de imobil
  */
 function createImobilCard(imobil, isLiked = false) {
-  const imagePath = imobil.imagini && imobil.imagini.length > 0 ? imobil.imagini[0].url : `https://randomaf-backend.onrender.comimages/casa1.jpg`;
+  const imagePath = imobil.imagini && imobil.imagini.length > 0 ? imobil.imagini[0].url : `https://randomaf-backend.onrender.com/images/casa1.jpg`;
   const price = imobil.pret ? `${imobil.pret} €` : 'Pret la cerere';
   const transactionType = imobil.tip_oferta === 'vanzare' ? 'Vanzare' : 'Inchiriere';
   const surface = imobil.tip_imobil === 'teren' ? 
